@@ -67,59 +67,40 @@ function setup() {
 }
 
 $(function () {
-    let cards_html = '';
-    let CARDS_INFO = ['card-reference-01.jpeg'];
-    // for (let i = 0; i < CARDS_INFO.length; i++) {
-    for (let i = 0; i < 10; i++) {
-        let card_image_path = 'images/cards/' + CARDS_INFO[0];
-        cards_html += '<div class="col">';
-        cards_html += '    <div class="card h-100">';
-        cards_html += `        <img src="${card_image_path}" class="card-img-top" alt="${CARDS_INFO[0]}">\n`;
-        cards_html += '    </div>';
-        cards_html += '</div>';
-    }
-    $('#cards-container #cards-grid').html(cards_html);
-
-    $('#cards-container img').click(function (e) {
-        $('.selected-card').removeClass('selected-card');
-        $(e.target).parent().addClass('selected-card');
-        CARD_SELECTED = $(e.target).attr('alt');
-    })
-
     // fetching image names from php script and fill card-container dynamically
-    // $.ajax({
-    //     type: 'POST',
-    //     url: 'php/cards_info.php',
-    //     data: '',
-    //     contentType: false,
-    //     processData: false,
-    //     cache: false,
-    //     success: function (result) {
-    //         CARDS_INFO = JSON.parse(result);
-    //         let cards_html = '';
-    //         for (let i = 0; i < CARDS_INFO.length; i++) {
-    //             // for (let i = 0; i < 10; i++) {
-    //             let card_image_path = 'images/cards/' + CARDS_INFO[0];
-    //             cards_html += '<div class="col">';
-    //             cards_html += '    <div class="card h-100">';
-    //             cards_html += `        <img src="${card_image_path}" class="card-img-top" alt="${CARDS_INFO[0]}">\n`;
-    //             cards_html += '    </div>';
-    //             cards_html += '</div>';
-    //         }
-    //         $('#cards-container #cards-grid').html(cards_html);
+    $.ajax({
+        type: 'POST',
+        url: 'php/cards_info.php',
+        data: '',
+        contentType: false,
+        processData: false,
+        cache: false,
+        success: function (result) {
+            CARDS_INFO = JSON.parse(result);
+            let cards_html = '';
+            for (let i = 0; i < CARDS_INFO.length; i++) {
+                // for (let i = 0; i < 10; i++) {
+                let card_image_path = 'images/cards/' + CARDS_INFO[0];
+                cards_html += '<div class="col">';
+                cards_html += '    <div class="card h-100">';
+                cards_html += `        <img src="${card_image_path}" class="card-img-top" alt="${CARDS_INFO[0]}">\n`;
+                cards_html += '    </div>';
+                cards_html += '</div>';
+            }
+            $('#cards-container #cards-grid').html(cards_html);
 
-    //         $('#cards-container img').click(function (e) {
-    //             $('.selected-card').removeClass('selected-card');
-    //             $(e.target).parent().addClass('selected-card');
-    //             CARD_SELECTED = $(e.target).attr('alt');
-    //         })
-    //     },
-    //     error: function (jqXHR, textStatus, errorThrown) {
-    //         console.log(TAG, '[ajax error][starts]');
-    //         console.log("Error, status = " + textStatus + ", " + "error thrown: " + errorThrown);
-    //         console.log(TAG, '[ajax error][ends]');
-    //     }
-    // });
+            $('#cards-container img').click(function (e) {
+                $('.selected-card').removeClass('selected-card');
+                $(e.target).parent().addClass('selected-card');
+                CARD_SELECTED = $(e.target).attr('alt');
+            })
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(TAG, '[ajax error][starts]');
+            console.log("Error, status = " + textStatus + ", " + "error thrown: " + errorThrown);
+            console.log(TAG, '[ajax error][ends]');
+        }
+    });
 
     // save-card callback to download image on user side and save record on server side
     $('#save-card').click(function () {
@@ -166,25 +147,25 @@ $(function () {
                 let image_name = text + '-' + CARD_SELECTED;
 
                 // send data to php script for saving in csv
-                // let fd = new FormData();
-                // fd.append('access-token', 'save-card');
-                // fd.append('card-text', card_text.text);
-                // fd.append('card-selected', CARD_SELECTED);
-                // fd.append('image-name', image_name);
-                // $.ajax({
-                //     type: "POST",
-                //     url: 'php/card.php',
-                //     data: fd,
-                //     contentType: false,
-                //     processData: false,
-                //     cache: false,
-                //     success: function (result) {},
-                //     error: function (jqXHR, textStatus, errorThrown) {
-                //         console.log('ajax error: starts');
-                //         console.log("Error, status = " + textStatus + ", " + "error thrown: " + errorThrown);
-                //         console.log('ajax error: ends');
-                //     }
-                // });
+                let fd = new FormData();
+                fd.append('access-token', 'save-card');
+                fd.append('card-text', card_text.text);
+                fd.append('card-selected', CARD_SELECTED);
+                fd.append('image-name', image_name);
+                $.ajax({
+                    type: "POST",
+                    url: 'php/card.php',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    success: function (result) {},
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log('ajax error: starts');
+                        console.log("Error, status = " + textStatus + ", " + "error thrown: " + errorThrown);
+                        console.log('ajax error: ends');
+                    }
+                });
 
                 alert('Card Image saved as: ' + image_name);
                 save(final_canvas, image_name);
